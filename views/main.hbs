@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Mongodb + Express with Handlebars</title>
+</head>
+<body>
+    <h1>(CRUD) Mongodb + Express with Handlebars</h1>
+
+
+    {{#if edit_id}}
+    <h2>Edit:{{message}}</h2>
+    <form method="post" action="/update_book/{{edit_id}}">
+        <label>Book Name</label>
+        <input name="name" type="text" value="{{edit_book.name}}"/>
+        <br/>
+        <br/>
+        <label>Author</label>
+        <input name="author" type="text" value="{{edit_book.author}}"/>
+        <button type="submit">Update</button>
+    </form>
+{{else}}
+    <h2>Create:{{message}}</h2>
+    <form method="post" action="/create_book">
+        <label>Book Name</label>
+        <input name="name"/>
+        <br/>
+        <br/>
+        <label>Author</label>
+        <input name="author"/>
+        <button type="submit">Submit</button>
+    </form>
+    {{/if}}
+
+    <ul>
+        {{#each lists}}
+        <li>{{this.name}}-{{this.author}}     <a style="margin-left: 10px;" href="/?edit_id={{this._id}}">Edit</a>   <a style="margin-left: 10px;" href="/?delete_id={{this._id}}" onclick="return confirm('Are you sure! you want to delete this {{this.name}}- {{this.author}}?')">Delete</a></li>
+        {{/each}}
+    </ul>
+</body>
+</html>
