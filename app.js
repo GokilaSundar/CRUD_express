@@ -37,6 +37,7 @@ app.get("/", async (req, res) => {
   //or
 
   ///---///----/// for mongoose
+
   // const lists = await bookModel.find({}).lean();
   //or
   const lists = await bookModel.find({}); //use runtimeoption in handlebar for access the protype instead of lean()
@@ -50,11 +51,19 @@ app.get("/", async (req, res) => {
   //get for edit item:
   var edit_id, edit_book;
   if (req.query.edit_id) {
-    edit_id = req.query.edit_id; //in this line we got _id:6402802842
+    edit_id = req.query.edit_id;
+    // edit_book = await books.findOne({ _id: new objectId(edit_id) });
+
+    //in this line we got _id:6402802842
     //but in mongodb _id:ObjectId(67514b4932be8705e9893bf9)
     //so to get exact id from mongo we used object Id from mongodb
     //to invoke objectid class we have to use new keyword
-    edit_book = await books.findOne({ _id: new objectId(edit_id) });
+
+    //or
+
+    ///---///----/// for mongoose
+    edit_book = await bookModel.findOne({ _id: edit_id });
+    ///---///----/// for mongoose
   }
 
   //---//
@@ -64,7 +73,14 @@ app.get("/", async (req, res) => {
   var delete_id;
   if (req.query.delete_id) {
     delete_id = req.query.delete_id;
-    await books.deleteOne({ _id: new objectId(delete_id) });
+    // await books.deleteOne({ _id: new objectId(delete_id) });
+
+    //or
+
+    ///---///----/// for mongoose
+    await bookModel.deleteOne({ _id: delete_id });
+    ///---///----/// for mongoose
+
     return res.redirect("/?status=delete");
   }
 
@@ -119,14 +135,23 @@ app.post("/create_book", async (req, res) => {
 });
 
 app.post("/update_book/:edit_id", async (req, res) => {
-  const database = await dbo.getDatabase();
-  const booksCollection = database.collection("books");
-  const book = { name: req.body.name, author: req.body.author };
   let edit_id = req.params.edit_id;
-  await booksCollection.updateOne(
-    { _id: new objectId(edit_id) },
-    { $set: book }
+  // const database = await dbo.getDatabase();
+  // const booksCollection = database.collection("books");
+  // const book = { name: req.body.name, author: req.body.author };
+  // await booksCollection.updateOne(
+  //   { _id: new objectId(edit_id) },
+  //   { $set: book }
+  // );
+
+  //or
+
+  ///---///----/// for mongoose
+  await bookModel.findOneAndUpdate(
+    { _id: edit_id },
+    { name: req.body.name, author: req.body.author }
   );
+  ///---///----/// for mongoose
 
   return res.redirect("/?status=update"); //it redirect to get method
 });
