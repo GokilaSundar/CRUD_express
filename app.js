@@ -1,10 +1,15 @@
-const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
 const body_parser = require("body-parser");
 const exhandlebar = require("express-handlebars"); //using handlebars template engine to render view template we used in this file
 const dbo = require("./db");
 const objectId = dbo.objectId; //it help to id into ObjectId() class  in  mongodb id
+
+///---///----/// for mongoose
+const bookModel = require("./models/bookModel");
+await dbo.getDatabase();
+///----///----///
+
 app.engine(
   "hbs",
   exhandlebar.engine({
@@ -80,10 +85,15 @@ app.get("/", async (req, res) => {
 });
 
 app.post("/create_book", async (req, res) => {
-  const database = await dbo.getDatabase();
-  const booksCollection = database.collection("books");
-  const book = { name: req.body.name, author: req.body.author };
-  await booksCollection.insertOne(book);
+  // const database = await dbo.getDatabase();
+  // const booksCollection = database.collection("books");
+  // const book = { name: req.body.name, author: req.body.author };
+  // await booksCollection.insertOne(book);
+
+  ///---///----/// for mongoose
+  const book = new bookModel({ name: req.body.name, author: req.body.author });
+  book.save();
+  ///---///----/// for mongoose
 
   return res.redirect("/?status=add"); //it redirect to get method
 });
