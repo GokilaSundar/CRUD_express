@@ -7,7 +7,7 @@ const objectId = dbo.objectId; //it help to id into ObjectId() class  in  mongod
 
 ///---///----/// for mongoose
 const bookModel = require("./models/bookModel");
-await dbo.getDatabase();
+dbo.getDatabase();
 ///----///----///
 
 app.engine(
@@ -16,6 +16,12 @@ app.engine(
     layoutsDir: "views/",
     defaultLayout: "main",
     extname: "hbs",
+
+    //instead of lean() we can use this
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true,
+      allowProtoMethodsByDefault: true,
+    },
   })
 );
 app.set("view engine", "hbs");
@@ -23,10 +29,19 @@ app.set("views", "views"); //views folder value is view
 app.use(body_parser.urlencoded({ extended: true })); //[act as a middleware] to access user input values in backend
 
 app.get("/", async (req, res) => {
-  const database = await dbo.getDatabase();
-  const books = database.collection("books");
-  const favbooks = books.find();
-  const lists = await favbooks.toArray();
+  // const database = await dbo.getDatabase();
+  // const books = database.collection("books");
+  // const favbooks = books.find();
+  // const lists = await favbooks.toArray();
+
+  //or
+
+  ///---///----/// for mongoose
+  // const lists = await bookModel.find({}).lean();
+  //or
+  const lists = await bookModel.find({}); //use runtimeoption in handlebar for access the protype instead of lean()
+
+  ///---///----/// for mongoose
 
   var message = "";
 
@@ -90,9 +105,14 @@ app.post("/create_book", async (req, res) => {
   // const book = { name: req.body.name, author: req.body.author };
   // await booksCollection.insertOne(book);
 
+  //or
+
   ///---///----/// for mongoose
-  const book = new bookModel({ name: req.body.name, author: req.body.author });
-  book.save();
+  const book = new bookModel({
+    name: req.body.name,
+    author: req.body.author,
+  });
+  await book.save();
   ///---///----/// for mongoose
 
   return res.redirect("/?status=add"); //it redirect to get method

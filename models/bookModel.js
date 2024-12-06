@@ -9,6 +9,4 @@ const bookSchema = mongoose.Schema({
 //create model
 const bookSchemaModel = mongoose.model("books", bookSchema);
 
-module.exports = {
-  bookSchema,
-};
+module.exports = bookSchemaModel;
