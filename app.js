@@ -16,6 +16,7 @@ app.engine(
     layoutsDir: "views/",
     defaultLayout: "main",
     extname: "hbs",
+    //to access its own property for hbs we have to use runtimeoptions if we doesnt use this we cant see any datas in browser instead of it show empty name and author
 
     //instead of lean() we can use this
     runtimeOptions: {
